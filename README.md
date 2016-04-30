@@ -61,7 +61,7 @@ func reservationsAsString() -> String {
 ```
 
 This method leverages the Zewo module File to write a string as data to a text file
-```
+``` swift
 func storeReservations() {
 	do {
 		let wrkDir = try File.workingDirectory()
