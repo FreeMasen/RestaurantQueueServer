@@ -2,7 +2,7 @@
 ========================
 #### Reservation
 simple object that will be stored to track people entering the resteraunt
-```
+``` swift
 class Reservation {
 	var id: Int
 	var name: String
@@ -46,7 +46,7 @@ I would like to convert this the JSON but right now server side swift does not h
 great options for this
 
 this method is used to convert the an array of Reservation objects into a CSV String
-```
+``` swift
 func reservationsAsString() -> String {
 	var string = ""
 	for res in reservations {
@@ -75,7 +75,7 @@ func storeReservations() {
 }
 ```
 these methods are used to retrieve the contents of our file
-```
+``` swift
 func readStoredReservations() {
 	do {
 		let wrkDir = try File.workingDirectory()
