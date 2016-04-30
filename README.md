@@ -25,17 +25,76 @@ this uses the [Zewo](https://github.com/Zewo/Zewo) HTTPServer module to respond 
 on port 8080 (the default)
 
 ##### Get
-This returns the list of stored objects in a CSV format
+There are two Get methods, on to confirm that the server is up and running
+the other returns our Reservations as plain text seperated by commas
+``` swift 
+route.get("/api") { request in 
+		print(request)
+		return Response(body: "connected")
+	}
+route.get("/api/RestaurantQueue") { request in 
+	let valueForReturn = reservationsAsString()
+	print("getRequest: \(request) \(NSDate())")
+	print(valueForReturn)
+	return Response(body: valueForReturn)
+}
+```
 
 ##### Post
-this adds a new Reservation
+this adds a new Reservation and assigns the id to the number of seconds
+since 1970
+``` swift
+route.post("/api/RestaurantQueue/:name/:size/") { request in
+	print("post request: \(request) \(NSDate())")
+	guard let name = request.pathParameters["name"],
+	       	size = request.pathParameters["size"]	else {
+		return Response(body: "error with request")
+	}
+	let id = NSDate().timeIntervalSince1970
 
+	let newReservation = Reservation(id: Int(id), name: name, size: Int(size)!, arrivalTime: "\(NSDate())", isReady: false)
+	reservations.append(newReservation)
+	storeReservations()
+	return Response(body: reservationsAsString())
+}
+```
 ##### Put
-this updates an existing Reservation
+this updates an existing Reservation by capturing the ":id" portion of the url
+and removing the object that shares that id.  It then returns the full list
+to the caller
+``` swift 
+route.put("/api/RestaurantQueue/seat/:id") { request in
+	print("put request: \(request) \(NSDate())")
+	guard let id = request.pathParameters["id"], resId = Int(id) else {
+		return Response(body: "error with ID")
+	}
+	for reservation in reservations {
+		if reservation.id == resId {
+			reservation.isReady = true
+			storeReservations()
+			return Response(body: reservationsAsString())
+		}
+	}
+	return Response(body: "no reservation found")
+}
+```
 
 ##### Delete
-this removes an existing Reservation
-
+this removes an existing Reservation by capturing the ":id" portion of the url
+and removing the object that shares that id.  It then returns the full list
+to the caller
+``` swift 
+route.delete("/api/RestaurantQueue/remove/:id") { request in
+	print("delete request: \(request) \(NSDate())")
+	guard let id = request.pathParameters["id"],
+       		resId = Int(id)	else {
+		return Response(body: "error with ID")
+	}
+	reservations = reservations.filter { $0.id != resId }	
+	storeReservations()
+	return Response(body: reservationsAsString())
+}
+```
 
 #### Data Storage
 Reservations are stored in a text file called reservations.txt in a CSV format
