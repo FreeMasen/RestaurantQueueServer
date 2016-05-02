@@ -25,7 +25,7 @@ this uses the [Zewo](https://github.com/Zewo/Zewo) HTTPServer module to respond 
 on port 8080 (the default)
 
 ##### Get
-There are two Get methods, on to confirm that the server is up and running
+There are two Get methods, one to confirm that the server is up and running
 the other returns our Reservations as plain text seperated by commas
 ``` swift 
 route.get("/api") { request in 
@@ -60,7 +60,7 @@ route.post("/api/RestaurantQueue/:name/:size/") { request in
 ```
 ##### Put
 this updates an existing Reservation by capturing the ":id" portion of the url
-and removing the object that shares that id.  It then returns the full list
+and updating the object that shares that id.  It then returns the full list
 to the caller
 ``` swift 
 route.put("/api/RestaurantQueue/seat/:id") { request in
